@@ -1,6 +1,6 @@
-CREATE TYPE token_type AS ENUM ('BEARER');
+-- CREATE TYPE token_type AS ENUM ('BEARER');
 CREATE TABLE tokens (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     token TEXT UNIQUE NOT NULL,
     token_type token_type DEFAULT 'BEARER',
     revoked BOOLEAN DEFAULT FALSE,
@@ -13,3 +13,5 @@ CREATE TABLE tokens (
         ON DELETE CASCADE
 );
 CREATE INDEX idx_token_value ON tokens(token);
+
+-- DROP TABLE IF EXISTS tokens;

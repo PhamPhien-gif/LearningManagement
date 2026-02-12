@@ -34,6 +34,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ProblemDetail> handleUserNotFound(UsernameNotFoundException ex){
         logger.error("User not found", ex);
-        return buildProblemDetail(ErrorCode.INVALID_CREDENTIALS);
+        return buildProblemDetail(ErrorCode.USER_NOT_FOUND);
     }
 }
