@@ -36,6 +36,7 @@ public class User implements UserDetails {
     private UUID id;
     private String email;
     private String password;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
