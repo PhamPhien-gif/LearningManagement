@@ -15,4 +15,13 @@ public class AuthHelloController {
     public String authHello(@AuthenticationPrincipal User user){
         return "Auth Hello " + user.getName() + " " + user.getEmail() + " " + user.getPassword();
     }
+    @GetMapping("/admin")
+    public String adminHello(@AuthenticationPrincipal User user){
+        return "Admin Hello " + user.getName() + " " + user.getRole();
+    }
+
+    @GetMapping("/student")
+    public String studentHello(@AuthenticationPrincipal User user){
+        return "Student Hello " + user.getName() + " " + user.getRole();
+    }
 }

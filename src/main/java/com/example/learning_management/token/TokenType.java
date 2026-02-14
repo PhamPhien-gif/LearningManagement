@@ -1,5 +1,6 @@
 package com.example.learning_management.token;
 
 public enum TokenType {
-    BEARER
+    REFRESH_TOKEN,
+    ACCESS_TOKEN
 }

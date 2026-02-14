@@ -1,12 +1,8 @@
 package com.example.learning_management.token;
 
 import java.util.UUID;
-
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.jdbc.core.SqlTypeValue;
-
 import com.example.learning_management.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +38,7 @@ public class Token {
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "token_type")
-    private TokenType tokenType = TokenType.BEARER;
+    private TokenType tokenType;
 
     private boolean revoked;
     private boolean expired;

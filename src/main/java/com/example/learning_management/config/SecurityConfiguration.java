@@ -1,8 +1,5 @@
 package com.example.learning_management.config;
 
-import java.beans.BeanProperty;
-
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,7 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import com.example.learning_management.user.Role;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
@@ -36,7 +33,9 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL).permitAll()
-                        .requestMatchers("/test-auth/**").authenticated()
+                        .requestMatchers("/test-auth/hello").authenticated()
+                        .requestMatchers("/test-auth/admin/**").hasAnyRole(Role.ADMIN.name())
+                        .requestMatchers("/test-auth/student/**").hasAnyRole(Role.STUDENT.name())
                         .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

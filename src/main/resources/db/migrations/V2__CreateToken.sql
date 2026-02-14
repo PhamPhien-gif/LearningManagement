@@ -1,8 +1,8 @@
--- CREATE TYPE token_type AS ENUM ('BEARER');
+CREATE TYPE token_type AS ENUM ('ACCESS_TOKEN','REFRESH_TOKEN');
 CREATE TABLE tokens (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     token TEXT UNIQUE NOT NULL,
-    token_type token_type DEFAULT 'BEARER',
+    token_type token_type,
     revoked BOOLEAN DEFAULT FALSE,
     expired BOOLEAN DEFAULT FALSE,
     
