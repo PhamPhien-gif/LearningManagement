@@ -52,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
             
-            //check expired and revoked in database
+            //check exist, tokenType, expired and revoked in database
             var token = tokenRepository.findByToken(jwt).orElse(null);
             final boolean isValidToken;
             if(token == null || token.isExpired() || token.isRevoked() && token.getTokenType() == TokenType.ACCESS_TOKEN){
@@ -61,6 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 isValidToken = true;
             }
 
+            //check secretKey and time expired
             if(jwtService.isTokenvalid(jwt, userDetails) && isValidToken){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userDetails,

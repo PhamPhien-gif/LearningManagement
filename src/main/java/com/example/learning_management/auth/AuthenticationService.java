@@ -1,20 +1,15 @@
 package com.example.learning_management.auth;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import com.example.learning_management.config.JwtService;
-import com.example.learning_management.token.Token;
 import com.example.learning_management.token.TokenRepository;
+import com.example.learning_management.token.TokenService;
 import com.example.learning_management.token.TokenType;
-import com.example.learning_management.user.User;
 import com.example.learning_management.user.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,56 +19,31 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final TokenService tokenService;
 
     public AuthenticationResponse authentication(AuthenticationRequest request){
+
+        //Authenticate username (email) and password
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
+
+        //if username and password correct, find user
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
+        //generate tokens
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserTokens(user, jwtToken, refreshToken);
+        
+        //revoke all tokens before login
+        tokenService.revokeAllUserTokens(user);
+
+        //save in database
+        tokenService.saveUserTokens(user, jwtToken, refreshToken);
         return AuthenticationResponse.builder()
                                     .accessToken(jwtToken)
                                     .refreshToken(refreshToken)
                                     .build();
-    }
-
-    private void revokeAllUserTokens(User user){
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if(validUserTokens.isEmpty()){
-            return;
-        }
-        validUserTokens.forEach(token->{
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
-    }
-
-    private void saveUserTokens(User user, String jwtToken, String refreshToken){
-        saveRefreshToken(user, refreshToken);
-        saveAccessToken(user, jwtToken);
-    }
-
-    private void saveRefreshToken(User user, String refreshToken){
-        saveUserToken(user, refreshToken, TokenType.REFRESH_TOKEN);
-    }
-
-    private void saveAccessToken(User user, String jwtToken){
-        saveUserToken(user, jwtToken, TokenType.ACCESS_TOKEN);
-    }
-
-    private void saveUserToken(User user, String jwtToken, TokenType tokenType){
-        var token = Token.builder()
-                        .user(user)
-                        .token(jwtToken)
-                        .tokenType(tokenType)
-                        .expired(false)
-                        .revoked(false)
-                        .build();
-        tokenRepository.save(token);
     }
 
     public AuthenticationResponse refreshToken(String authHeader){
@@ -102,8 +72,8 @@ public class AuthenticationService {
         }
         var accessToken = jwtService.generateToken(userDetail);
             var refreshToken = jwtService.generateRefreshToken(userDetail);
-            revokeAllUserTokens(userDetail);
-            saveUserTokens(userDetail, accessToken, refreshToken);
+            tokenService.revokeAllUserTokens(userDetail);
+            tokenService.saveUserTokens(userDetail, accessToken, refreshToken);
             return AuthenticationResponse.builder()
                                     .accessToken(accessToken)
                                     .refreshToken(refreshToken)
