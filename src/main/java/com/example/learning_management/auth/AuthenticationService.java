@@ -6,9 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.example.learning_management.config.JwtService;
-import com.example.learning_management.token.TokenRepository;
 import com.example.learning_management.token.TokenService;
-import com.example.learning_management.token.TokenType;
 import com.example.learning_management.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -16,68 +14,65 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final TokenService tokenService;
 
-    public AuthenticationResponse authentication(AuthenticationRequest request){
+    public AuthenticationResponse authentication(AuthenticationRequest request) {
 
-        //Authenticate username (email) and password
+        // Authenticate username (email) and password
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        //if username and password correct, find user
+        // if username and password correct, find user
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
-        //generate tokens
+        // generate tokens
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        
-        //revoke all tokens before login
+
+        // revoke all tokens before login
         tokenService.revokeAllUserTokens(user);
 
-        //save in database
+        // save in database
         tokenService.saveUserTokens(user, jwtToken, refreshToken);
         return AuthenticationResponse.builder()
-                                    .accessToken(jwtToken)
-                                    .refreshToken(refreshToken)
-                                    .build();
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    public AuthenticationResponse refreshToken(String authHeader){
-        
-        if(authHeader == null || !authHeader.startsWith("Bearer")){
+    public AuthenticationResponse refreshToken(String authHeader) {
+        // check header
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {
             throw new IllegalArgumentException("Invalid Authorization format");
         }
 
         final String jwt = authHeader.substring(7);
-        final String userEmail = jwtService.extractUsername(jwt);
 
-        if(userEmail == null) {
+        // check user
+        final String userEmail = jwtService.extractUsername(jwt);
+        if (userEmail == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        var userDetail = userRepository.findByEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        var token = tokenRepository.findByToken(jwt).orElse(null);
-        final boolean isValidToken;
-        if(token == null || token.isExpired() || token.isRevoked() || token.getTokenType() != TokenType.REFRESH_TOKEN){
-            isValidToken = false;
-        }else{
-            isValidToken = true;
-        }
+        var userDetail = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if(!jwtService.isTokenvalid(jwt, userDetail) || !isValidToken){
+        // check refreshToken
+        if (!jwtService.isRefreshTokenValid(jwt, userDetail)) {
             throw new BadCredentialsException("Refresh Token is invalid");
         }
+
+        //generate, revoke and save tokens
         var accessToken = jwtService.generateToken(userDetail);
-            var refreshToken = jwtService.generateRefreshToken(userDetail);
-            tokenService.revokeAllUserTokens(userDetail);
-            tokenService.saveUserTokens(userDetail, accessToken, refreshToken);
-            return AuthenticationResponse.builder()
-                                    .accessToken(accessToken)
-                                    .refreshToken(refreshToken)
-                                    .build();
+        var refreshToken = jwtService.generateRefreshToken(userDetail);
+        tokenService.revokeAllUserTokens(userDetail);
+        tokenService.saveUserTokens(userDetail, accessToken, refreshToken);
+        
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
 }
