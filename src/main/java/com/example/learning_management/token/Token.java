@@ -3,6 +3,8 @@ package com.example.learning_management.token;
 import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import com.example.learning_management.shared.BaseEntity;
 import com.example.learning_management.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,21 +19,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name = "tokens")
-public class Token {
+public class Token extends BaseEntity {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
     @Column(unique = true)
     private String token;
 
