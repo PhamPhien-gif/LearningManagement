@@ -1,10 +1,9 @@
 package com.example.learning_management.course;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.example.learning_management.config.ErrorCode;
 import com.example.learning_management.shared.AppException;
 import com.example.learning_management.user.Role;
@@ -21,46 +20,50 @@ public class CourseService {
     private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
 
-    @Transactional
-   
-    public Course createCourse(Course course, User registrar) {
-
-        //get the real instructor, subject after valid
-        InnerCourseService data = validCourse(course);
-        
-        Course newCourse = Course.builder()
-                .registrar(registrar)
-                .subject(data.subject)
-                .instructor(data.instructor)
-                .maxStudents(course.getMaxStudents())
-                .timeBegin(course.getTimeBegin())
-                .timeEnd(course.getTimeEnd())
-                .build();
-        return courseRepository.save(newCourse);
-    }
-
-    private record InnerCourseService(User instructor, Subject subject) {
-    }
-
-    private InnerCourseService validCourse(Course course) {
+    @Transactional   
+    public CourseResponse createCourse(CreateCourseRequest request, User registrar) {
 
         // check instructor
-        User instructor = userRepository.findById(course.getInstructor().getId())
+        User instructor = userRepository.findById(request.getInstructorId())
                 .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTOR_NOT_FOUND));
         if (instructor.getRole() != Role.INSTRUCTOR) {
             throw new AppException(ErrorCode.INSTRUCTOR_NOT_FOUND);
         }
 
         // check subject
-        Subject subject = subjectRepository.findById(course.getSubject().getId())
+        Subject subject = subjectRepository.findById(request.getSubjectId())
                 .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
 
-        final Integer maxStudent = course.getMaxStudents();
-        if (maxStudent == null || maxStudent <= 0 || maxStudent > 120) {
+        final Integer maxStudents = request.getMaxStudents();
+        if (maxStudents == null || maxStudents <= 0 || maxStudents > 120) {
             throw new AppException(ErrorCode.INVALID_COURSE_CAPACITY);
         }
 
-        return new InnerCourseService(instructor, subject);
+        final LocalDateTime timeBegin = request.getTimeBegin();
+        final LocalDateTime timeEnd = request.getTimeEnd();
+        if(!timeBegin.isBefore(timeEnd)){
+            throw new AppException(ErrorCode.INVALID_COURSE_TIME);
+        }
+
+        Course newCourse = Course.builder()
+                .registrar(registrar)
+                .subject(subject)
+                .instructor(instructor)
+                .maxStudents(maxStudents)
+                .timeBegin(timeBegin)
+                .timeEnd(timeEnd)
+                .build();
+        Course successCourse = courseRepository.save(newCourse);
+
+        return CourseResponse.builder()
+                            .id(successCourse.getId())
+                            .instructorName(instructor.getName())
+                            .subjectName(subject.getName())
+                            .subjectCode(subject.getCode())
+                            .maxStudents(maxStudents)
+                            .timeBegin(timeBegin)
+                            .timeEnd(timeEnd)
+                            .build();
     }
 
 }
