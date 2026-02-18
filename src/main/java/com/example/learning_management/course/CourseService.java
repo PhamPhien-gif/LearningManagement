@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.learning_management.config.ErrorCode;
+import com.example.learning_management.course.dto.AllCourseStudentReponse;
 import com.example.learning_management.course.dto.AllCoursesResponse;
 import com.example.learning_management.course.dto.CourseDetailResponse;
 import com.example.learning_management.course.dto.CourseSummary;
@@ -19,6 +21,7 @@ import com.example.learning_management.shared.AppException;
 import com.example.learning_management.user.Role;
 import com.example.learning_management.user.User;
 import com.example.learning_management.user.UserRepository;
+import com.example.learning_management.user.dto.StudentSummary;
 import lombok.RequiredArgsConstructor;
 
 import static com.example.learning_management.course.CourseSpecification.hasInstructor;
@@ -26,6 +29,7 @@ import static com.example.learning_management.course.CourseSpecification.hasPeri
 import static com.example.learning_management.course.CourseSpecification.hasStudent;
 import static com.example.learning_management.course.CourseSpecification.hasSubject;
 import static org.springframework.data.jpa.domain.Specification.where;
+import static com.example.learning_management.user.specification.StudentSpecification.hasEnrolledCourse;
 
 @Service
 @Transactional(readOnly = true, rollbackFor = Exception.class) // rollback when catch exception, default readOnly
@@ -58,7 +62,7 @@ public class CourseService {
             throw new AppException(ErrorCode.INVALID_COURSE_TIME);
         }
 
-        Course newCourse = Course.builder()
+        var newCourse = Course.builder()
                 .registrar(registrar)
                 .subject(subject)
                 .instructor(instructor)
@@ -82,7 +86,7 @@ public class CourseService {
     }
 
     public CourseDetailResponse getCourseDetail(UUID courseId) {
-        //find course
+        // find course
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
@@ -112,7 +116,7 @@ public class CourseService {
                 .timeBegin(course.getTimeBegin())
                 .timeEnd(course.getTimeEnd())
                 .maxStudents(course.getMaxStudents())
-                .materialSummaries(materialSummaries)
+                .materials(materialSummaries)
                 .build();
 
     }
@@ -147,6 +151,42 @@ public class CourseService {
                 .totalElements(courses.getNumberOfElements())
                 .isLast(courses.isLast())
                 .build();
+    }
+
+    public AllCourseStudentReponse getAllCourseStudent(UUID courseId, Pageable pageable) {
+        //get current user in SecurityContext
+        User viewer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        //the viewer must be the instructor of this course
+        boolean isInstructor = courseRepository.existsByIdAndInstructorId(courseId, viewer.getId());
+        if(!isInstructor){
+            // if has no permission, assume the course not found
+            throw new AppException(ErrorCode.COURSE_NOT_FOUND);
+        }
+
+        Page<User> usersPage = userRepository.findAll(hasEnrolledCourse(courseId), pageable);
+
+        // prepare students
+        List<StudentSummary> students = new ArrayList<>();
+        usersPage.get().forEach(student -> {
+            var studentSummary = StudentSummary.builder()
+                    .id(student.getId())
+                    .name(student.getName())
+                    .email(student.getEmail())
+                    .role(student.getRole().name())
+                    .build();
+            students.add(studentSummary);
+        });
+
+        return AllCourseStudentReponse.builder()
+                    .students(students)
+                    .isLast(usersPage.isLast())
+                    .pageNumber(usersPage.getNumber())
+                    .pageSize(usersPage.getSize())
+                    .totalElements(usersPage.getNumberOfElements())
+                    .totalPages(usersPage.getTotalPages())
+                    .build();
+
     }
 
 }

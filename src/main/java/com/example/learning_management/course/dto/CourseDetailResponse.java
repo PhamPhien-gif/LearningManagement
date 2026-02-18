@@ -14,6 +14,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CourseDetailResponse extends CourseSummary {
-    private List<MaterialSummary> materialSummaries;
+    private List<MaterialSummary> materials;
 
 }

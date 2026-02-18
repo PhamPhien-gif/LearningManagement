@@ -1,7 +1,6 @@
 package com.example.learning_management.course;
 
 import java.util.UUID;
-
 import org.springframework.data.jpa.domain.Specification;
 
 public class CourseSpecification {
@@ -10,7 +9,7 @@ public class CourseSpecification {
             if (periodId == null) {
                 return null;
             }
-            return cb.equal(root.get("period_id"), periodId);
+            return cb.equal(root.get("period").get("id"), periodId);
         };
     }
 

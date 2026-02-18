@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.learning_management.course.dto.AllCourseStudentReponse;
 import com.example.learning_management.course.dto.AllCoursesResponse;
 import com.example.learning_management.course.dto.CourseDetailResponse;
 import com.example.learning_management.course.dto.CreateCourseRequest;
@@ -38,18 +39,26 @@ public class CourseController {
     }
 
     @GetMapping("/getAll")
-    public AllCoursesResponse getAllCourses(
+    public ResponseEntity<AllCoursesResponse> getAllCourses(
             @RequestParam(required = false) UUID periodId,
             @RequestParam(required = false) UUID instructorId,
             @RequestParam(required = false) UUID subjectId,
             @RequestParam(required = false) UUID studentId,
             @RequestParam(required = false, defaultValue = "1") Integer page) {
         Pageable pageable = PageRequest.of(page - 1, sizePage, Sort.by(sortBy).descending());
-        return courseService.getAllCourses(periodId, studentId, instructorId, subjectId, pageable);
+        return ResponseEntity.ok(courseService.getAllCourses(periodId, studentId, instructorId, subjectId, pageable));
     }
 
     @GetMapping("/{courseId}")
-    public CourseDetailResponse getCourseDetail(@PathVariable UUID courseId){
-        return courseService.getCourseDetail(courseId);
+    public ResponseEntity<CourseDetailResponse> getCourseDetail(@PathVariable UUID courseId){
+        return ResponseEntity.ok(courseService.getCourseDetail(courseId));
+    }
+
+    //cần check giảng viên thuộc lớp
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @GetMapping("/{courseId}/students")
+    public ResponseEntity<AllCourseStudentReponse> getCourseStudents(@PathVariable UUID courseId, int page){
+        Pageable pageable = PageRequest.of(page-1, sizePage, Sort.by("name").ascending());
+        return ResponseEntity.ok(courseService.getAllCourseStudent(courseId, pageable));
     }
 }
