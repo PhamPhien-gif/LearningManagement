@@ -22,6 +22,7 @@ public class CreateCourseRequest {
     @NotNull(message = "Instructor must not be null")
     private UUID instructorId;
 
+    @NotNull(message = "Course capacity must not be null")
     @Min(value = 1, message = "INVALID_COURSE_CAPACITY")
     @Max(value = 120, message = "INVALID_COURSE_CAPACITY")
     private Integer maxStudents;

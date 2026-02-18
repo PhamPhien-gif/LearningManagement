@@ -1,34 +1,32 @@
 package com.example.learning_management.enrollment;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.example.learning_management.course.Course;
 import com.example.learning_management.shared.BaseEntity;
+import com.example.learning_management.user.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Getter
 @Setter
-@Table(name = "enrollment_periods")
-public class Period extends BaseEntity{
-    private String name;
-    private LocalDateTime timeBegin;
-    private LocalDateTime timeEnd;
+@Table(name = "enrollments")
+public class Enrollment extends BaseEntity{
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id")
+    private User student;
 
-    @OneToMany(mappedBy = "period", fetch = FetchType.LAZY)
-    private List<Course> courses;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
 }

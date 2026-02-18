@@ -4,16 +4,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.learning_management.config.ErrorCode;
 import com.example.learning_management.course.dto.AllCoursesResponse;
+import com.example.learning_management.course.dto.CourseDetailResponse;
 import com.example.learning_management.course.dto.CourseSummary;
 import com.example.learning_management.course.dto.CreateCourseRequest;
 import com.example.learning_management.course.dto.CreateCourseResponse;
+import com.example.learning_management.material.dto.MaterialSummary;
 import com.example.learning_management.shared.AppException;
 import com.example.learning_management.user.Role;
 import com.example.learning_management.user.User;
@@ -49,10 +50,8 @@ public class CourseService {
                 .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
 
         final Integer maxStudents = request.getMaxStudents();
-        if (maxStudents == null || maxStudents <= 0 || maxStudents > 120) {
-            throw new AppException(ErrorCode.INVALID_COURSE_CAPACITY);
-        }
 
+        // check valid time
         final LocalDateTime timeBegin = request.getTimeBegin();
         final LocalDateTime timeEnd = request.getTimeEnd();
         if (!timeBegin.isBefore(timeEnd)) {
@@ -67,6 +66,8 @@ public class CourseService {
                 .timeBegin(timeBegin)
                 .timeEnd(timeEnd)
                 .build();
+
+        // Insert into database
         Course successCourse = courseRepository.save(newCourse);
 
         return CreateCourseResponse.builder()
@@ -80,25 +81,51 @@ public class CourseService {
                 .build();
     }
 
-    // public GetDetailCoursesResponse getDetailCourse(UUID courseId, User viewer){
+    public CourseDetailResponse getCourseDetail(UUID courseId) {
+        //find course
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
-    // Boolean isEnrolled =
-    // }
+        // prepare list material summaries
+        List<MaterialSummary> materialSummaries = new ArrayList<>();
+        course.getMaterials().forEach(material -> {
+            var materialSummary = MaterialSummary.builder()
+                    .id(material.getId())
+                    .title(material.getTitle())
+                    .fileSize(material.getFileSize())
+                    .fileType(material.getFileType())
+                    .isPreview(material.getIsPreview())
+                    .createdAt(material.getCreatedAt())
+                    .updatedAt(material.getUpdatedAt())
+                    .build();
+            materialSummaries.add(materialSummary);
+        });
 
-    // public Boolean isEnrolled(){
+        User instructor = course.getInstructor();
+        Subject subject = course.getSubject();
 
-    // }
+        return CourseDetailResponse.builder()
+                .id(courseId)
+                .instructorName(instructor.getName())
+                .subjectCode(subject.getCode())
+                .subjectName(subject.getName())
+                .timeBegin(course.getTimeBegin())
+                .timeEnd(course.getTimeEnd())
+                .maxStudents(course.getMaxStudents())
+                .materialSummaries(materialSummaries)
+                .build();
 
-    // N+1 Query
+    }
+
     public AllCoursesResponse getAllCourses(UUID periodId, UUID studentId, UUID instructorId, UUID subjectId,
             Pageable pageable) {
-        //get all courses, using jpa specification        
+        // get all courses, using jpa specification
         Page<Course> courses = courseRepository.findAll(where(hasPeriod(periodId)
                 .and(hasStudent(studentId))
                 .and(hasInstructor(instructorId))
                 .and(hasSubject(subjectId))), pageable);
 
-        //build list course summaries
+        // build list course summaries
         List<CourseSummary> courseSummaries = new ArrayList<>();
 
         courses.forEach(course -> courseSummaries.add(

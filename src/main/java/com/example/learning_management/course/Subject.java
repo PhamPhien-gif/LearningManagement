@@ -36,10 +36,10 @@ public class Subject extends BaseEntity{
     private List<Subject> prerequisites;
 
     //List subjects unlock after finish this subject
-    @ManyToMany(mappedBy = "prerequisites")
+    @ManyToMany(mappedBy = "prerequisites", fetch = FetchType.LAZY)
     private List<Subject> requireFor;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
     private List<Course> courses;
 
 }

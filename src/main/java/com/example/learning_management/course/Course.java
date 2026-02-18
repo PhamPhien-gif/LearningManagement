@@ -1,13 +1,17 @@
 package com.example.learning_management.course;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.example.learning_management.enrollment.Enrollment;
 import com.example.learning_management.enrollment.Period;
+import com.example.learning_management.material.Material;
 import com.example.learning_management.shared.BaseEntity;
 import com.example.learning_management.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,5 +49,10 @@ public class Course extends BaseEntity {
     private LocalDateTime timeBegin;
     private LocalDateTime timeEnd;
 
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Material> materials;
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Enrollment> enrollments;
 
 }

@@ -1,11 +1,11 @@
 package com.example.learning_management.auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import com.example.learning_management.config.ErrorCode;
 import com.example.learning_management.config.JwtService;
+import com.example.learning_management.shared.AppException;
 import com.example.learning_management.token.TokenService;
 import com.example.learning_management.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,14 +53,14 @@ public class AuthenticationService {
         // check user
         final String userEmail = jwtService.extractUsername(jwt);
         if (userEmail == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
         var userDetail = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // check refreshToken
         if (!jwtService.isRefreshTokenValid(jwt, userDetail)) {
-            throw new BadCredentialsException("Refresh Token is invalid");
+            throw new AppException(ErrorCode.TOKEN_INVALID);
         }
 
         //generate, revoke and save tokens

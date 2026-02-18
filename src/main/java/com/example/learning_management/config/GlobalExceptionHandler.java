@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,7 +66,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).body(problemDetail);
     }
 
-    //Uncategorized exception
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ProblemDetail> handleAccessDenied(AccessDeniedException ex){
+        logger.error("Access Denied", ex);
+        return buildProblemDetail(ErrorCode.ACCESS_DENIED);
+    }
+
+    // Uncategorized exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handlGenericException(Exception ex){
         logger.error("Unknow error: ", ex);

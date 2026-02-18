@@ -1,5 +1,6 @@
 package com.example.learning_management.course;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -14,4 +15,8 @@ public interface CourseRepository extends JpaRepository<Course, UUID>, JpaSpecif
     @Override
     @EntityGraph(attributePaths = {"instructor", "subject"})
     Page<Course> findAll(Specification<Course> spe, Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = {"instructor", "subject", "materials"})
+    Optional<Course> findById(UUID id);
 }
