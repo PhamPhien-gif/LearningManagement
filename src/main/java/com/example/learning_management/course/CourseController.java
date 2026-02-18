@@ -36,7 +36,7 @@ public class CourseController {
     }
 
     @GetMapping("/getAll")
-    public AllCoursesResponse getAllCourse(
+    public AllCoursesResponse getAllCourses(
             @RequestParam(required = false) UUID periodId,
             @RequestParam(required = false) UUID instructorId,
             @RequestParam(required = false) UUID subjectId,
