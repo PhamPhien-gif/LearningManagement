@@ -1,4 +1,4 @@
-package com.example.learning_management.course;
+package com.example.learning_management.course.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

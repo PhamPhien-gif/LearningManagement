@@ -3,9 +3,11 @@ package com.example.learning_management.course;
 import java.util.List;
 import com.example.learning_management.shared.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +26,7 @@ public class Subject extends BaseEntity{
     private String code;
     
     //Recursive relationship
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "subject_prerequisites",
         joinColumns = @JoinColumn(name = "subject_id"),

@@ -61,6 +61,7 @@ CREATE TABLE courses (
     subject_id UUID REFERENCES subjects(id) ON DELETE CASCADE,
     instructor_id UUID REFERENCES users(id),
     registrar_id UUID REFERENCES users(id),
+    period_id UUID REFERENCES enrollment_periods(id),
     max_students INTEGER DEFAULT 50,
     time_begin TIMESTAMPTZ,
     time_end TIMESTAMPTZ,

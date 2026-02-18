@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {
-            "/api/v1/auth/**",
             "/v3/api-docs",
             "/swagger-ui/**"
     };
@@ -37,10 +36,13 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL).permitAll()
+                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/authentication").anonymous() //has not login yet
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/test-auth/hello").authenticated()
-                        .requestMatchers("/test-auth/admin/**").hasAnyRole(Role.ADMIN.name())
-                        .requestMatchers("/test-auth/student/**").hasAnyRole(Role.STUDENT.name())
-                        .anyRequest().permitAll())
+                        .requestMatchers("/test-auth/admin/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/test-auth/student/**").hasRole(Role.STUDENT.name())
+                        .requestMatchers("/api/v1/course/**").permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
