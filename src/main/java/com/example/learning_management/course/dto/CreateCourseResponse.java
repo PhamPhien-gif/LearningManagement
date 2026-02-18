@@ -1,23 +1,8 @@
-package com.example.learning_management.course;
+package com.example.learning_management.course.dto;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import lombok.experimental.SuperBuilder;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+@SuperBuilder
+public class CreateCourseResponse extends CourseSummary{
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class CourseResponse {
-    private UUID id;
-    private String subjectName;
-    private String subjectCode;
-    private String instructorName;
-    private Integer maxStudents;
-    private LocalDateTime timeBegin;
-    private LocalDateTime timeEnd;
 }

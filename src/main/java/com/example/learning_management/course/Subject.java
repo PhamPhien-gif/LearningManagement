@@ -7,7 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,5 +38,8 @@ public class Subject extends BaseEntity{
     //List subjects unlock after finish this subject
     @ManyToMany(mappedBy = "prerequisites")
     private List<Subject> requireFor;
+
+    @OneToMany(mappedBy = "subject")
+    private List<Course> courses;
 
 }

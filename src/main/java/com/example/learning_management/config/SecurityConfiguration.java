@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {
-            "/v3/api-docs",
+            "/v3/api-docs/**",
             "/swagger-ui/**"
     };
 

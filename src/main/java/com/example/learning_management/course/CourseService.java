@@ -1,19 +1,19 @@
 package com.example.learning_management.course;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.learning_management.config.ErrorCode;
+import com.example.learning_management.course.dto.AllCoursesResponse;
+import com.example.learning_management.course.dto.CourseSummary;
 import com.example.learning_management.course.dto.CreateCourseRequest;
 import com.example.learning_management.course.dto.CreateCourseResponse;
-import com.example.learning_management.course.dto.GetDetailCoursesResponse;
 import com.example.learning_management.shared.AppException;
 import com.example.learning_management.user.Role;
 import com.example.learning_management.user.User;
@@ -26,9 +26,6 @@ import static com.example.learning_management.course.CourseSpecification.hasStud
 import static com.example.learning_management.course.CourseSpecification.hasSubject;
 import static org.springframework.data.jpa.domain.Specification.where;
 
-
-
-
 @Service
 @Transactional(readOnly = true, rollbackFor = Exception.class) // rollback when catch exception, default readOnly
 @RequiredArgsConstructor
@@ -37,7 +34,7 @@ public class CourseService {
     private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
 
-    @Transactional   
+    @Transactional
     public CreateCourseResponse createCourse(CreateCourseRequest request, User registrar) {
 
         // check instructor
@@ -58,7 +55,7 @@ public class CourseService {
 
         final LocalDateTime timeBegin = request.getTimeBegin();
         final LocalDateTime timeEnd = request.getTimeEnd();
-        if(!timeBegin.isBefore(timeEnd)){
+        if (!timeBegin.isBefore(timeEnd)) {
             throw new AppException(ErrorCode.INVALID_COURSE_TIME);
         }
 
@@ -73,31 +70,56 @@ public class CourseService {
         Course successCourse = courseRepository.save(newCourse);
 
         return CreateCourseResponse.builder()
-                            .id(successCourse.getId())
-                            .instructorName(instructor.getName())
-                            .subjectName(subject.getName())
-                            .subjectCode(subject.getCode())
-                            .maxStudents(maxStudents)
-                            .timeBegin(timeBegin)
-                            .timeEnd(timeEnd)
-                            .build();
+                .id(successCourse.getId())
+                .instructorName(instructor.getName())
+                .subjectName(subject.getName())
+                .subjectCode(subject.getCode())
+                .maxStudents(maxStudents)
+                .timeBegin(timeBegin)
+                .timeEnd(timeEnd)
+                .build();
     }
 
     // public GetDetailCoursesResponse getDetailCourse(UUID courseId, User viewer){
 
-    //     Boolean isEnrolled = 
+    // Boolean isEnrolled =
     // }
 
     // public Boolean isEnrolled(){
 
     // }
-    
-    public Page<Course> getAllCourses(UUID periodId, UUID studentId, UUID instructorId, UUID subjectId, Pageable pageable){
-        return courseRepository.findAll(where(hasPeriod(periodId)
-                                        .and(hasStudent(studentId))
-                                        .and(hasInstructor(instructorId))
-                                        .and(hasSubject(subjectId))
-                                    ), pageable);
+
+    // N+1 Query
+    public AllCoursesResponse getAllCourses(UUID periodId, UUID studentId, UUID instructorId, UUID subjectId,
+            Pageable pageable) {
+        //get all courses, using jpa specification        
+        Page<Course> courses = courseRepository.findAll(where(hasPeriod(periodId)
+                .and(hasStudent(studentId))
+                .and(hasInstructor(instructorId))
+                .and(hasSubject(subjectId))), pageable);
+
+        //build list course summaries
+        List<CourseSummary> courseSummaries = new ArrayList<>();
+
+        courses.forEach(course -> courseSummaries.add(
+                CourseSummary.builder()
+                        .id(course.getId())
+                        .instructorName(course.getInstructor().getName())
+                        .subjectName(course.getSubject().getName())
+                        .subjectCode(course.getSubject().getCode())
+                        .maxStudents(course.getMaxStudents())
+                        .timeBegin(course.getTimeBegin())
+                        .timeEnd(course.getTimeEnd())
+                        .build()));
+
+        return AllCoursesResponse.builder()
+                .courses(courseSummaries)
+                .pageNumber(courses.getNumber())
+                .pageSize(courses.getSize())
+                .totalPages(courses.getTotalPages())
+                .totalElements(courses.getNumberOfElements())
+                .isLast(courses.isLast())
+                .build();
     }
 
 }

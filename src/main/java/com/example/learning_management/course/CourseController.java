@@ -1,8 +1,6 @@
 package com.example.learning_management.course;
 
 import java.util.UUID;
-
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.example.learning_management.course.dto.AllCoursesResponse;
 import com.example.learning_management.course.dto.CreateCourseRequest;
 import com.example.learning_management.course.dto.CreateCourseResponse;
 import com.example.learning_management.user.User;
@@ -38,7 +36,7 @@ public class CourseController {
     }
 
     @GetMapping("/getAll")
-    public Page<Course> getAllCourse(
+    public AllCoursesResponse getAllCourse(
             @RequestParam(required = false) UUID periodId,
             @RequestParam(required = false) UUID instructorId,
             @RequestParam(required = false) UUID subjectId,

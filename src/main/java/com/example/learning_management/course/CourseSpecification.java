@@ -37,7 +37,7 @@ public class CourseSpecification {
             if (subjectId == null) {
                 return null;
             }
-            return cb.equal(root.get("subject_id"), subjectId);
+            return cb.equal(root.get("subject").get("id"), subjectId);
         };
     }
 
