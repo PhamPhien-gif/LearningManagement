@@ -29,7 +29,7 @@ public enum ErrorCode {
 
     //Enrollment Errors
     INVALID_PERIOD_TIME("PERIOD_001", "Invalid Period Time", "Begin time must be earlier than end time", HttpStatus.BAD_REQUEST),
-
+    PERIOD_NOT_FOUND("PERIOD_002", "Period Not Found", "The specified period (ID) is invalid or does not exist", HttpStatus.NOT_FOUND),
     //Generic Erors
     UNCATEGORIZED_EXCEPTION("9999", "Uncategorized Error", "An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 

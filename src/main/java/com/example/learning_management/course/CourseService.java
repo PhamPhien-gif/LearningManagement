@@ -16,6 +16,8 @@ import com.example.learning_management.course.dto.CourseDetailResponse;
 import com.example.learning_management.course.dto.CourseSummary;
 import com.example.learning_management.course.dto.CreateCourseRequest;
 import com.example.learning_management.course.dto.CreateCourseResponse;
+import com.example.learning_management.enrollment.Period;
+import com.example.learning_management.enrollment.PeriodRepository;
 import com.example.learning_management.material.dto.MaterialSummary;
 import com.example.learning_management.shared.AppException;
 import com.example.learning_management.user.Role;
@@ -38,34 +40,49 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
+    private final PeriodRepository periodRepository;
 
     @Transactional
     public CreateCourseResponse createCourse(CreateCourseRequest request, User registrar) {
+        final UUID instructorId = request.getInstructorId();
+        final UUID subjectId = request.getSubjectId();
+        final UUID periodId = request.getPeriodId();
+        final LocalDateTime timeBegin = request.getTimeBegin();
+        final LocalDateTime timeEnd = request.getTimeEnd();
+        final Integer maxStudents = request.getMaxStudents();
 
         // check instructor
-        User instructor = userRepository.findById(request.getInstructorId())
-                .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTOR_NOT_FOUND));
-        if (instructor.getRole() != Role.INSTRUCTOR) {
+        boolean existsInstructor = userRepository.existsByIdAndRole(instructorId, Role.INSTRUCTOR);
+        if (!existsInstructor) {
             throw new AppException(ErrorCode.INSTRUCTOR_NOT_FOUND);
         }
 
         // check subject
-        Subject subject = subjectRepository.findById(request.getSubjectId())
-                .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
+        boolean existsSubject = subjectRepository.existsById(subjectId);
+        if (!existsSubject) {
+            throw new AppException(ErrorCode.SUBJECT_NOT_FOUND);
+        }
 
-        final Integer maxStudents = request.getMaxStudents();
+        //check period
+        boolean existsPeriod = periodRepository.existsById(periodId);
+        if(!existsPeriod){
+            throw new AppException(ErrorCode.PERIOD_NOT_FOUND);
+        }
 
-        // check valid time
-        final LocalDateTime timeBegin = request.getTimeBegin();
-        final LocalDateTime timeEnd = request.getTimeEnd();
+        // check valid time        
         if (!timeBegin.isBefore(timeEnd)) {
             throw new AppException(ErrorCode.INVALID_COURSE_TIME);
         }
+
+        User instructor = userRepository.getReferenceById(instructorId);
+        Subject subject = subjectRepository.getReferenceById(subjectId);
+        Period period = periodRepository.getReferenceById(periodId);
 
         var newCourse = Course.builder()
                 .registrar(registrar)
                 .subject(subject)
                 .instructor(instructor)
+                .period(period)
                 .maxStudents(maxStudents)
                 .timeBegin(timeBegin)
                 .timeEnd(timeEnd)
@@ -154,12 +171,12 @@ public class CourseService {
     }
 
     public AllCourseStudentReponse getAllCourseStudent(UUID courseId, Pageable pageable) {
-        //get current user in SecurityContext
+        // get current user in SecurityContext
         User viewer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        //the viewer must be the instructor of this course
+        // the viewer must be the instructor of this course
         boolean isInstructor = courseRepository.existsByIdAndInstructorId(courseId, viewer.getId());
-        if(!isInstructor){
+        if (!isInstructor) {
             // if has no permission, assume the course not found
             throw new AppException(ErrorCode.COURSE_NOT_FOUND);
         }
@@ -179,13 +196,13 @@ public class CourseService {
         });
 
         return AllCourseStudentReponse.builder()
-                    .students(students)
-                    .isLast(usersPage.isLast())
-                    .pageNumber(usersPage.getNumber())
-                    .pageSize(usersPage.getSize())
-                    .totalElements(usersPage.getNumberOfElements())
-                    .totalPages(usersPage.getTotalPages())
-                    .build();
+                .students(students)
+                .isLast(usersPage.isLast())
+                .pageNumber(usersPage.getNumber())
+                .pageSize(usersPage.getSize())
+                .totalElements(usersPage.getNumberOfElements())
+                .totalPages(usersPage.getTotalPages())
+                .build();
 
     }
 
