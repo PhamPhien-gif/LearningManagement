@@ -1,15 +1,12 @@
 package com.example.learning_management.enrollment;
 
 import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.example.learning_management.config.ErrorCode;
 import com.example.learning_management.enrollment.dto.OpenPeriodRequest;
 import com.example.learning_management.enrollment.dto.PeriodSummary;
 import com.example.learning_management.shared.AppException;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -41,5 +38,5 @@ public class EnrollmentService {
                 .build();
     }
 
-    
+
 }
