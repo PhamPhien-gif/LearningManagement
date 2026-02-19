@@ -130,4 +130,8 @@ CREATE TABLE grade_course (
 
 ALTER TABLE materials
 ADD is_preview BOOLEAN DEFAULT FALSE,
-ADD course_id UUID REFERENCES courses (id) on DELETE CASCADE
+ADD course_id UUID REFERENCES courses (id) on DELETE CASCADE;
+
+ALTER Table courses
+ADD current_students INTEGER,
+ADD is_enrollable BOOLEAN;

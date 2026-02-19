@@ -25,7 +25,7 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         // if username and password correct, find user
-        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // generate tokens
         var jwtToken = jwtService.generateToken(user);
@@ -63,12 +63,12 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.TOKEN_INVALID);
         }
 
-        //generate, revoke and save tokens
+        // generate, revoke and save tokens
         var accessToken = jwtService.generateToken(userDetail);
         var refreshToken = jwtService.generateRefreshToken(userDetail);
         tokenService.revokeAllUserTokens(userDetail);
         tokenService.saveUserTokens(userDetail, accessToken, refreshToken);
-        
+
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

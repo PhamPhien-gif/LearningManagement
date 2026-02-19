@@ -2,7 +2,6 @@ package com.example.learning_management.course;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.example.learning_management.enrollment.Enrollment;
 import com.example.learning_management.enrollment.Period;
 import com.example.learning_management.material.Material;
@@ -46,6 +45,10 @@ public class Course extends BaseEntity {
     private Period period;
 
     private Integer maxStudents;
+    @Builder.Default
+    private Integer currentStudents = 0;
+    @Builder.Default
+    private Boolean isEnrollable = true;
     private LocalDateTime timeBegin;
     private LocalDateTime timeEnd;
 

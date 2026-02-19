@@ -26,10 +26,13 @@ public enum ErrorCode {
     INVALID_COURSE_CAPACITY("COURSE_004", "Invalid Max Students", "Max students must be between 5 and 100", HttpStatus.BAD_REQUEST),
     INVALID_COURSE_TIME("COURSE_005", "Invalid Course Time", "Begin time must be earlier than end time", HttpStatus.BAD_REQUEST),
     COURSE_NOT_FOUND("COURSE_006", "Course Not Found","The specified course (ID) is invalid or does not exist", HttpStatus.NOT_FOUND),
-
+    COURSE_CLOSED("COURSE_004", "Course Closed", "This course is no longer accepting new enrollments", HttpStatus.BAD_REQUEST),
     //Enrollment Errors
     INVALID_PERIOD_TIME("PERIOD_001", "Invalid Period Time", "Begin time must be earlier than end time", HttpStatus.BAD_REQUEST),
     PERIOD_NOT_FOUND("PERIOD_002", "Period Not Found", "The specified period (ID) is invalid or does not exist", HttpStatus.NOT_FOUND),
+    REGISTRATION_CLOSED("PERIOD_003", "Registration Closed", "The registration period has ended or is not yet open", HttpStatus.BAD_REQUEST),
+    ENROLLMENT_DISABLED("PERIOD_004", "Enrollment Disabled", "The enrollment for this course has been manually closed by the administrator", HttpStatus.BAD_REQUEST),
+    COURSE_FULL("PERIOD_005", "Course Full", "The course has reached its maximum capacity of students", HttpStatus.BAD_REQUEST),
     //Generic Erors
     UNCATEGORIZED_EXCEPTION("9999", "Uncategorized Error", "An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 

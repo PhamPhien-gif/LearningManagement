@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.learning_management.config.ErrorCode;
@@ -104,7 +103,7 @@ public class CourseService {
 
     public CourseDetailResponse getCourseDetail(UUID courseId) {
         // find course
-        Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findWithInstructorAndSubjectAndMaterialById(courseId)
                 .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
         // prepare list material summaries
@@ -141,7 +140,7 @@ public class CourseService {
     public AllCoursesResponse getAllCourses(UUID periodId, UUID studentId, UUID instructorId, UUID subjectId,
             Pageable pageable) {
         // get all courses, using jpa specification
-        Page<Course> courses = courseRepository.findAll(where(hasPeriod(periodId)
+        Page<Course> courses = courseRepository.findAllWithSubjectAndInstructorBy(where(hasPeriod(periodId)
                 .and(hasStudent(studentId))
                 .and(hasInstructor(instructorId))
                 .and(hasSubject(subjectId))), pageable);
@@ -170,10 +169,7 @@ public class CourseService {
                 .build();
     }
 
-    public AllCourseStudentReponse getAllCourseStudent(UUID courseId, Pageable pageable) {
-        // get current user in SecurityContext
-        User viewer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+    public AllCourseStudentReponse getAllCourseStudent(UUID courseId, Pageable pageable, User viewer) {
         // the viewer must be the instructor of this course
         boolean isInstructor = courseRepository.existsByIdAndInstructorId(courseId, viewer.getId());
         if (!isInstructor) {
