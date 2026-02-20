@@ -1,12 +1,17 @@
 package com.example.learning_management.enrollment;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.learning_management.config.ErrorCode;
 import com.example.learning_management.course.Course;
 import com.example.learning_management.course.CourseRepository;
+import com.example.learning_management.enrollment.dto.AllEnrollmentResponse;
 import com.example.learning_management.enrollment.dto.DeleteEnrollmentResponse;
 import com.example.learning_management.enrollment.dto.EnrollRequest;
 import com.example.learning_management.enrollment.dto.EnrollResponse;
@@ -16,6 +21,10 @@ import com.example.learning_management.shared.AppException;
 import com.example.learning_management.user.Role;
 import com.example.learning_management.user.User;
 import lombok.RequiredArgsConstructor;
+
+import static com.example.learning_management.enrollment.EnrollmentSpecification.hasStudent;
+import static com.example.learning_management.enrollment.EnrollmentSpecification.hasPeriod;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -86,8 +95,8 @@ public class EnrollmentService {
         }
 
         return EnrollResponse.builder()
+                .enrollmentId(enrollment.getId())
                 .courseId(courseId)
-                .periodId(period.getId())
                 .studentId(student.getId())
                 .build();
 
@@ -107,11 +116,10 @@ public class EnrollmentService {
         }
     }
 
-    // check student enrollment, check role admin/registrar,
     @Transactional
     public DeleteEnrollmentResponse deleteEnrollment(UUID enrollmentId, User user) {
         final UUID userId = user.getId();
-        final boolean isRegistrar = user.getRole() == Role.REGISTRAR;
+        final boolean isRegistrar = user.getRole().equals(Role.REGISTRAR);
 
         // if registrar: has permission to delete any enrollment
         int success;
@@ -125,6 +133,37 @@ public class EnrollmentService {
             throw new AppException(ErrorCode.ENROLLMENT_DELETE_FAILED);
         }
         return DeleteEnrollmentResponse.builder()
+                .build();
+    }
+
+    public AllEnrollmentResponse getAllEnrollments(UUID periodId, UUID studentId, User viewer, Pageable pageable) {
+        //if want to get from another Student or getAll but not has Registrar
+        if ((studentId == null || !studentId.equals(viewer.getId()) )
+                && !viewer.getRole().equals(Role.REGISTRAR)) {
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+
+        Page<Enrollment> enrollments = enrollmentRepository.findAll(
+                where(hasPeriod(periodId).and(hasStudent(studentId))),
+                pageable);
+        List<EnrollResponse> enrolls = new ArrayList<>();
+        enrollments.forEach(enroll -> {
+            EnrollResponse enrollResponse = EnrollResponse.builder()
+                    .enrollmentId(enroll.getId())
+                    .courseId(enroll.getCourse().getId())
+                    .studentId(enroll.getStudent().getId())
+                    .build();
+
+            enrolls.add(enrollResponse);
+        });
+
+        return AllEnrollmentResponse.builder()
+                .pageNumber(enrollments.getNumber())
+                .pageSize(enrollments.getSize())
+                .totalPages(enrollments.getTotalPages())
+                .totalElements(enrollments.getNumberOfElements())
+                .isLast(enrollments.isLast())
+                .enrolls(enrolls)
                 .build();
     }
 

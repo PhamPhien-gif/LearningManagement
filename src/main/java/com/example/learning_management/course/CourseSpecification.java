@@ -4,7 +4,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
 public class CourseSpecification {
-    public static Specification<Course> hasPeriod(UUID periodId) {
+    static public Specification<Course> hasPeriod(UUID periodId) {
         return (root, query, cb) -> {
             if (periodId == null) {
                 return null;
@@ -13,7 +13,7 @@ public class CourseSpecification {
         };
     }
 
-    public static Specification<Course> hasInstructor(UUID instructorId) {
+    static public Specification<Course> hasInstructor(UUID instructorId) {
         return (root, query, cb) -> {
             if (instructorId == null) {
                 return null;
@@ -22,7 +22,7 @@ public class CourseSpecification {
         };
     }
 
-    public static Specification<Course> hasStudent(UUID studentId) {
+    static public Specification<Course> hasStudent(UUID studentId) {
         return (root, query, cb) -> {
             if (studentId == null) {
                 return null;
@@ -31,7 +31,7 @@ public class CourseSpecification {
         };
     }
 
-    public static Specification<Course> hasSubject(UUID subjectId) {
+    static public Specification<Course> hasSubject(UUID subjectId) {
         return (root, query, cb) -> {
             if (subjectId == null) {
                 return null;

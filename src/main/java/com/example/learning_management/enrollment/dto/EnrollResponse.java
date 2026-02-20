@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnrollResponse {
+    private UUID enrollmentId;
     private UUID studentId;
-    private UUID periodId;
     private UUID courseId;
 }
