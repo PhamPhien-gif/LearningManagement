@@ -33,6 +33,7 @@ public enum ErrorCode {
     REGISTRATION_CLOSED("PERIOD_003", "Registration Closed", "The registration period has ended or is not yet open", HttpStatus.BAD_REQUEST),
     ENROLLMENT_DISABLED("PERIOD_004", "Enrollment Disabled", "The enrollment for this course has been manually closed by the administrator", HttpStatus.BAD_REQUEST),
     COURSE_FULL("PERIOD_005", "Course Full", "The course has reached its maximum capacity of students", HttpStatus.BAD_REQUEST),
+    ALREADY_ENROLLED("PERIOD_006", "Already Enrolled", "The student has already registered for this course", HttpStatus.BAD_REQUEST),
     //Generic Erors
     UNCATEGORIZED_EXCEPTION("9999", "Uncategorized Error", "An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 

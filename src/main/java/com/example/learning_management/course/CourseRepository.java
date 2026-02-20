@@ -20,6 +20,9 @@ public interface CourseRepository extends JpaRepository<Course, UUID>, JpaSpecif
     @EntityGraph(attributePaths = { "instructor", "subject", "materials" })
     Optional<Course> findWithInstructorAndSubjectAndMaterialById(UUID id);
 
+    @EntityGraph(attributePaths = {"period"})
+    Optional<Course> findWithPeriodById(UUID id);
+
     boolean existsByIdAndInstructorId(UUID id, UUID instructorId);
 
     boolean existsById(UUID id);
