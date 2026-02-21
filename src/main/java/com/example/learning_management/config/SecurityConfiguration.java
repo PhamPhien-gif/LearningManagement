@@ -43,6 +43,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/test-auth/student/**").hasRole(Role.STUDENT.name())
                         .requestMatchers("/api/v1/course/**").permitAll()
                         .requestMatchers("/api/v1/period/**").permitAll()
+                        .requestMatchers("/api/v1/material/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

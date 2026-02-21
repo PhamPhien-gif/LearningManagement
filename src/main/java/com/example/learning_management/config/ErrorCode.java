@@ -39,6 +39,8 @@ public enum ErrorCode {
     
     //Material Errors
     MATERIAL_DELETE_FAILED("MATERIAL_001", "Delete Material Failed", "Could not delete the material. Please try again later.", HttpStatus.BAD_REQUEST),
+    MATERIAL_NOT_FOUND("MATERIAL_004", "Material Not Found", "The specified material does not exist", HttpStatus.NOT_FOUND),
+    
     //Generic Erors
     UNCATEGORIZED_EXCEPTION("9999", "Uncategorized Error", "An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 

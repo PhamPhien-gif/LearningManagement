@@ -1,6 +1,8 @@
 package com.example.learning_management.material;
 
+import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,4 +18,7 @@ public interface MaterialRepository extends JpaRepository<Material, UUID>, JpaSp
             "where c.instructor.id = :instructorId " +
             "and c.id = m.course.id)")
     int deleteByIdAndInstructorId(@Param("id") UUID id, @Param("instructorId") UUID instructorId);
+    
+    @EntityGraph(attributePaths = {"course"})
+    Optional<Material> findWithCourseById(UUID id);
 }
