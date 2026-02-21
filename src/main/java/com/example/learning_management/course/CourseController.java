@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.learning_management.course.dto.AllCourseStudentReponse;
 import com.example.learning_management.course.dto.AllCoursesResponse;
 import com.example.learning_management.course.dto.CourseDetailResponse;
+import com.example.learning_management.course.dto.CourseSummary;
 import com.example.learning_management.course.dto.CreateCourseRequest;
-import com.example.learning_management.course.dto.CreateCourseResponse;
 import com.example.learning_management.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class CourseController {
 
     @PreAuthorize("hasRole('REGISTRAR')")
     @PostMapping("/create")
-    public ResponseEntity<CreateCourseResponse> createCourse(@Valid @RequestBody CreateCourseRequest request,
+    public ResponseEntity<CourseSummary> createCourse(@Valid @RequestBody CreateCourseRequest request,
             @AuthenticationPrincipal User registrar) {
         return ResponseEntity.ok(courseService.createCourse(request, registrar));
     }

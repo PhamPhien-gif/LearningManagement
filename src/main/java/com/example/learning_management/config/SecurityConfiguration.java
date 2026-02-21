@@ -42,6 +42,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/test-auth/admin/**").hasRole(Role.ADMIN.name())
                         .requestMatchers("/test-auth/student/**").hasRole(Role.STUDENT.name())
                         .requestMatchers("/api/v1/course/**").permitAll()
+                        .requestMatchers("/api/v1/period/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

@@ -1,9 +1,7 @@
 package com.example.learning_management.token;
 
 import org.springframework.stereotype.Service;
-
 import com.example.learning_management.user.User;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,7 +22,7 @@ public class TokenService {
     }
 
     public void revokeAllUserTokens(String userEmail){
-        var validUserTokens = tokenRepository.findAllValidTokenByEmail(userEmail);
+        var validUserTokens = tokenRepository.findAllTokensByUserEmail(userEmail);
         if(validUserTokens.isEmpty()){
             return;
         }

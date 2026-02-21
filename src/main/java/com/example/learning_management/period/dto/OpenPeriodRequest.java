@@ -1,4 +1,4 @@
-package com.example.learning_management.enrollment.dto;
+package com.example.learning_management.period.dto;
 
 import java.time.LocalDateTime;
 

@@ -1,7 +1,6 @@
 package com.example.learning_management.course.dto;
 
 import java.util.List;
-import java.util.UUID;
 import com.example.learning_management.shared.PageResponse;
 import com.example.learning_management.user.dto.StudentSummary;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class AllCourseStudentReponse extends PageResponse{
+public class AllCourseStudentReponse{
+    private PageResponse pageDetail;
     private List<StudentSummary> students;
-    private UUID instructorId;
 }

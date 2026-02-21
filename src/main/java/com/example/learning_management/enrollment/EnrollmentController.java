@@ -1,7 +1,6 @@
 package com.example.learning_management.enrollment;
 
 import java.util.UUID;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.learning_management.enrollment.dto.AllEnrollmentResponse;
 import com.example.learning_management.enrollment.dto.DeleteEnrollmentResponse;
 import com.example.learning_management.enrollment.dto.EnrollRequest;
 import com.example.learning_management.enrollment.dto.EnrollResponse;
-import com.example.learning_management.enrollment.dto.OpenPeriodRequest;
-import com.example.learning_management.enrollment.dto.PeriodSummary;
+import com.example.learning_management.period.dto.OpenPeriodRequest;
+import com.example.learning_management.period.dto.PeriodSummary;
 import com.example.learning_management.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

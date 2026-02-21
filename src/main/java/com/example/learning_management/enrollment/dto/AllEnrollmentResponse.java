@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Setter
 @Getter
-public class AllEnrollmentResponse extends PageResponse{
+public class AllEnrollmentResponse {
+    PageResponse pageDetail;
     List<EnrollResponse> enrolls;
 }

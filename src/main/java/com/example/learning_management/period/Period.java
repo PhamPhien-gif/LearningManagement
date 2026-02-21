@@ -1,11 +1,9 @@
-package com.example.learning_management.enrollment;
+package com.example.learning_management.period;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.example.learning_management.course.Course;
 import com.example.learning_management.shared.BaseEntity;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;

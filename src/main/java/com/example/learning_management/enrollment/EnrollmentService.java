@@ -15,9 +15,12 @@ import com.example.learning_management.enrollment.dto.AllEnrollmentResponse;
 import com.example.learning_management.enrollment.dto.DeleteEnrollmentResponse;
 import com.example.learning_management.enrollment.dto.EnrollRequest;
 import com.example.learning_management.enrollment.dto.EnrollResponse;
-import com.example.learning_management.enrollment.dto.OpenPeriodRequest;
-import com.example.learning_management.enrollment.dto.PeriodSummary;
+import com.example.learning_management.period.Period;
+import com.example.learning_management.period.PeriodRepository;
+import com.example.learning_management.period.dto.OpenPeriodRequest;
+import com.example.learning_management.period.dto.PeriodSummary;
 import com.example.learning_management.shared.AppException;
+import com.example.learning_management.shared.PageResponse;
 import com.example.learning_management.user.Role;
 import com.example.learning_management.user.User;
 import lombok.RequiredArgsConstructor;
@@ -156,13 +159,9 @@ public class EnrollmentService {
 
             enrolls.add(enrollResponse);
         });
-
+        var pageDetail = new PageResponse(enrollments);
         return AllEnrollmentResponse.builder()
-                .pageNumber(enrollments.getNumber())
-                .pageSize(enrollments.getSize())
-                .totalPages(enrollments.getTotalPages())
-                .totalElements(enrollments.getNumberOfElements())
-                .isLast(enrollments.isLast())
+                .pageDetail(pageDetail)
                 .enrolls(enrolls)
                 .build();
     }
