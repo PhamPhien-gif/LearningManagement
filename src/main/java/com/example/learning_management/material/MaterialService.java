@@ -79,9 +79,12 @@ public class MaterialService {
         boolean hasPermission = false;
         UUID courseId = material.getCourse().getId();
         UUID viewerId = viewer.getId();
+
+        //if instructor, check is the instructor of the course
         if(viewer.getRole().equals(Role.INSTRUCTOR)){
             hasPermission = courseRepository.existsByIdAndInstructorId(courseId, viewerId);
         }else{
+        //if not instructor, check is enrolled the course
             hasPermission = enrollmentRepository.existsByStudentIdAndCourseId(viewerId, courseId);
         }
         return hasPermission;
