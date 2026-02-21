@@ -7,6 +7,7 @@ import com.example.learning_management.config.ErrorCode;
 import com.example.learning_management.course.Course;
 import com.example.learning_management.course.CourseRepository;
 import com.example.learning_management.material.dto.AddMaterialRequest;
+import com.example.learning_management.material.dto.DeleteMaterialResponse;
 import com.example.learning_management.material.dto.MaterialSummary;
 import com.example.learning_management.shared.AppException;
 import com.example.learning_management.user.User;
@@ -39,5 +40,15 @@ public class MaterialService {
                         .title(request.getTitle())
                         .build());
         return MaterialSummary.from(successMaterial);
+    }
+
+    @Transactional
+    public DeleteMaterialResponse deleteMaterial(UUID materialId, User instructor){
+        UUID instructorId = instructor.getId();
+        int success = materialRepository.deleteByIdAndInstructorId(materialId, instructorId);
+        if(success==0){
+            throw new AppException(ErrorCode.ENROLLMENT_DELETE_FAILED); 
+        }
+        return new DeleteMaterialResponse();
     }
 }
