@@ -9,11 +9,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import com.example.learning_management.exam.dto.CreateExamRequest;
 import com.example.learning_management.exam.dto.UpdateExamRequest;
 import com.example.learning_management.exam.dto.ExamDetail;
+import com.example.learning_management.exam.dto.ExamSummary;
 
 @Mapper(componentModel = "spring")
 public interface ExamMapper {
-    // @Mapping(source = "course.id", target = "courseId")
     ExamDetail toDetail(Exam exam);
+    ExamSummary toSummary(Exam exam);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "submissions", ignore = true)

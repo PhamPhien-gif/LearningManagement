@@ -1,17 +1,24 @@
 package com.example.learning_management.exam;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.learning_management.config.ErrorCode;
 import com.example.learning_management.course.Course;
 import com.example.learning_management.course.CourseRepository;
 import com.example.learning_management.enrollment.EnrollmentRepository;
+import com.example.learning_management.exam.dto.AllExamsResponse;
 import com.example.learning_management.exam.dto.CreateExamRequest;
 import com.example.learning_management.exam.dto.ExamDetail;
+import com.example.learning_management.exam.dto.ExamSummary;
 import com.example.learning_management.exam.dto.UpdateExamRequest;
 import com.example.learning_management.shared.AppException;
+import com.example.learning_management.shared.PageResponse;
 import com.example.learning_management.user.Role;
 import com.example.learning_management.user.User;
 import lombok.RequiredArgsConstructor;
@@ -74,6 +81,25 @@ public class ExamService {
         }
 
         return examMapper.toDetail(exam);
+    }
+
+    public AllExamsResponse getAllExams(UUID courseId, User viewer,Pageable pageable) {
+        //check permission
+        if (!isHasPermission(courseId, viewer)) {
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+
+        Page<Exam> examPage = examRepository.findAllByCourseId(courseId, pageable);
+        PageResponse pageDetail = new PageResponse(examPage);
+
+        List<ExamSummary> exams = new ArrayList<>();
+        examPage.forEach(exam -> exams.add(examMapper.toSummary(exam)));
+        
+        return AllExamsResponse.builder()
+                .exams(exams)
+                .pageDetail(pageDetail)
+                .build();
+
     }
 
     private boolean isHasPermission(UUID courseId, User viewer) {
