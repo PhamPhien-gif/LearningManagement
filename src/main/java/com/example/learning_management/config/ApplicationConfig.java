@@ -13,10 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import com.example.learning_management.user.Role;
 import com.example.learning_management.user.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -51,17 +49,13 @@ public class ApplicationConfig {
         return configuration.getAuthenticationManager();
     }
 
-    // @Bean
-    // public RoleHierarchy roleHierarchy(){
-    //     String admin = Role.ADMIN.name();
-    //     String registrar = Role.REGISTRAR.name();
-    //     String instructor = Role.INSTRUCTOR.name();
-    //     String student = Role.STUDENT.name();
-    //     return RoleHierarchyImpl.withDefaultRolePrefix()
-    //                     .role(admin).implies(registrar)
-    //                     .role(registrar).implies(instructor)
-    //                     .role(instructor).implies(student)
-    //                     .build();   
+    @Bean
+    public RoleHierarchy roleHierarchy(){
+        String admin = Role.ADMIN.name();
+        String registrar = Role.REGISTRAR.name();
+        return RoleHierarchyImpl.withDefaultRolePrefix()
+                        .role(admin).implies(registrar)
+                        .build();   
     
-    // }
+    }
 }
