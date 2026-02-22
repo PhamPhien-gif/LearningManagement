@@ -50,19 +50,17 @@ public class CourseController {
     }
 
     @GetMapping("/{courseId}")
-    public ResponseEntity<CourseDetailResponse> getCourseDetail(@PathVariable UUID courseId){
+    public ResponseEntity<CourseDetailResponse> getCourseDetail(@PathVariable UUID courseId) {
         return ResponseEntity.ok(courseService.getCourseDetail(courseId));
     }
 
-    //cần check giảng viên thuộc lớp
     @PreAuthorize("hasRole('INSTRUCTOR')")
     @GetMapping("/{courseId}/students")
     public ResponseEntity<AllCourseStudentReponse> getCourseStudents(
-        @PathVariable UUID courseId, 
-        int page,
-        @AuthenticationPrincipal User viewer
-    ){
-        Pageable pageable = PageRequest.of(page-1, sizePage, Sort.by("name").ascending());
+            @PathVariable UUID courseId,
+            int page,
+            @AuthenticationPrincipal User viewer) {
+        Pageable pageable = PageRequest.of(page - 1, sizePage, Sort.by("name").ascending());
         return ResponseEntity.ok(courseService.getAllCourseStudent(courseId, pageable, viewer));
     }
 }
