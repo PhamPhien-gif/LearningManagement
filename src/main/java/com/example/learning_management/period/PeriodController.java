@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/period")
 public class PeriodController {
-    final PeriodService periodService;
+    private final PeriodService periodService;
 
     @GetMapping("/getAll")
     public ResponseEntity<AllPeriodsResponse> getAllPeriods(@RequestParam(required = false, defaultValue = "1") int page){

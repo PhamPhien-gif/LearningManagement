@@ -14,6 +14,7 @@ import com.example.learning_management.course.dto.AllCoursesResponse;
 import com.example.learning_management.course.dto.CourseDetailResponse;
 import com.example.learning_management.course.dto.CourseSummary;
 import com.example.learning_management.course.dto.CreateCourseRequest;
+import com.example.learning_management.material.MaterialMapper;
 import com.example.learning_management.material.dto.MaterialSummary;
 import com.example.learning_management.period.Period;
 import com.example.learning_management.period.PeriodRepository;
@@ -40,6 +41,7 @@ public class CourseService {
     private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
     private final PeriodRepository periodRepository;
+    private final MaterialMapper materialMapper;
 
     @Transactional
     public CourseSummary createCourse(CreateCourseRequest request, User registrar) {
@@ -101,7 +103,7 @@ public class CourseService {
         // prepare list material summaries
         List<MaterialSummary> materialSummaries = new ArrayList<>();
         course.getMaterials().forEach(material -> {
-            var materialSummary = MaterialSummary.from(material);
+            var materialSummary = materialMapper.toSummary(material);
             materialSummaries.add(materialSummary);
         });
 

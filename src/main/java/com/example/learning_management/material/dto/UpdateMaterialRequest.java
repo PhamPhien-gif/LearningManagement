@@ -1,24 +1,16 @@
 package com.example.learning_management.material.dto;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MaterialDetail {
-    private UUID id;
+public class UpdateMaterialRequest {
     private String title;
     private String filePath;
     private String fileType;
     private Integer fileSize;
     private Boolean isPreview;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
 }

@@ -18,7 +18,11 @@ public interface MaterialRepository extends JpaRepository<Material, UUID>, JpaSp
             "where c.instructor.id = :instructorId " +
             "and c.id = m.course.id)")
     int deleteByIdAndInstructorId(@Param("id") UUID id, @Param("instructorId") UUID instructorId);
-    
-    @EntityGraph(attributePaths = {"course"})
+
+    @Query("Select m from Material m " +
+            "where m.id = :id and m.course.instructor.id = :instructorId")
+    Optional<Material> findByIdAndInstructorId(@Param("id") UUID id, @Param("instructorId") UUID instructorId);
+
+    @EntityGraph(attributePaths = { "course" })
     Optional<Material> findWithCourseById(UUID id);
 }

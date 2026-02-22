@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true, rollbackFor = Exception.class)
 public class PeriodService {
-    final PeriodRepository periodRepository;
+    private final PeriodRepository periodRepository;
 
     public AllPeriodsResponse getAllPeriods(Pageable pageable) {
         Page<Period> periodsPage = periodRepository.findAll(pageable);
