@@ -9,43 +9,63 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    //Validation
+    // Validation
     INVALID_INPUT("GEN_001", "Invalid Input", "Invalid Input", HttpStatus.BAD_REQUEST),
 
-    //Auth Errors
+    // Auth Errors
     INVALID_CREDENTIALS("AUTH_001", "Authentication Failed", "Invalid email or password", HttpStatus.UNAUTHORIZED),
     USER_NOT_FOUND("USER_001", "User Not Found", "The requested user does not exist", HttpStatus.NOT_FOUND),
     TOKEN_EXPIRED("AUTH_002", "Token Expired", "Your session has expired. Please login again", HttpStatus.UNAUTHORIZED),
-    ACCESS_DENIED("AUTH_003", "Access Denied", "You do not have permission to access this resource", HttpStatus.FORBIDDEN),
+    ACCESS_DENIED("AUTH_003", "Access Denied", "You do not have permission to access this resource",
+            HttpStatus.FORBIDDEN),
     TOKEN_INVALID("AUTH_004", "Token Invalid", "Your token is invalid", HttpStatus.UNAUTHORIZED),
 
     // Course Erors
-    REGISTRAR_NOT_FOUND("COURSE_001", "Registrar Not Found", "The specified registrar (ID) does not exist", HttpStatus.NOT_FOUND),
-    INSTRUCTOR_NOT_FOUND("COURSE_002", "Instructor Not Found", "The specified instructor (ID) does not exist", HttpStatus.NOT_FOUND),
-    SUBJECT_NOT_FOUND("COURSE_003", "Subject Not Found", "The specified subject (ID) is invalid or does not exist", HttpStatus.NOT_FOUND),
-    INVALID_COURSE_CAPACITY("COURSE_004", "Invalid Max Students", "Max students must be between 5 and 100", HttpStatus.BAD_REQUEST),
-    INVALID_COURSE_TIME("COURSE_005", "Invalid Course Time", "Begin time must be earlier than end time", HttpStatus.BAD_REQUEST),
-    COURSE_NOT_FOUND("COURSE_006", "Course Not Found","The specified course (ID) is invalid or does not exist", HttpStatus.NOT_FOUND),
-    COURSE_CLOSED("COURSE_004", "Course Closed", "This course is no longer accepting new enrollments", HttpStatus.BAD_REQUEST),
-    //Enrollment Errors
-    INVALID_PERIOD_TIME("PERIOD_001", "Invalid Period Time", "Begin time must be earlier than end time", HttpStatus.BAD_REQUEST),
-    PERIOD_NOT_FOUND("PERIOD_002", "Period Not Found", "The specified period (ID) is invalid or does not exist", HttpStatus.NOT_FOUND),
-    REGISTRATION_CLOSED("ENROLLMENT_001", "Registration Closed", "The registration period has ended or is not yet open", HttpStatus.BAD_REQUEST),
-    ENROLLMENT_DISABLED("ENROLLMENT_002", "Enrollment Disabled", "The enrollment for this course has been manually closed by the administrator", HttpStatus.BAD_REQUEST),
-    COURSE_FULL("PERIOD_005", "Course Full", "The course has reached its maximum capacity of students", HttpStatus.BAD_REQUEST),
-    ALREADY_ENROLLED("ENROLLMENT_003", "Already Enrolled", "The student has already registered for this course", HttpStatus.BAD_REQUEST),
-    ENROLLMENT_NOT_FOUND("ENROLLMENT_004", "Enrollment Not Found", "The specified enrollment does not exist", HttpStatus.NOT_FOUND),
-    ENROLLMENT_DELETE_FAILED("ENROLLMENT_005", "Delete Enrollment Failed", "Could not delete the enrollment. Please try again later.", HttpStatus.BAD_REQUEST),
-    
-    //Material Errors
-    MATERIAL_DELETE_FAILED("MATERIAL_001", "Delete Material Failed", "Could not delete the material. Please try again later.", HttpStatus.BAD_REQUEST),
-    MATERIAL_NOT_FOUND("MATERIAL_004", "Material Not Found", "The specified material does not exist", HttpStatus.NOT_FOUND),
-    
-    //Exam Errors
-    EXAM_NOT_FOUND("EXAM_001", "Exam Not Found", "The specified exam does not exist", HttpStatus.NOT_FOUND),
+    REGISTRAR_NOT_FOUND("COURSE_001", "Registrar Not Found", "The specified registrar (ID) does not exist",
+            HttpStatus.NOT_FOUND),
+    INSTRUCTOR_NOT_FOUND("COURSE_002", "Instructor Not Found", "The specified instructor (ID) does not exist",
+            HttpStatus.NOT_FOUND),
+    SUBJECT_NOT_FOUND("COURSE_003", "Subject Not Found", "The specified subject (ID) is invalid or does not exist",
+            HttpStatus.NOT_FOUND),
+    INVALID_COURSE_CAPACITY("COURSE_004", "Invalid Max Students", "Max students must be between 5 and 100",
+            HttpStatus.BAD_REQUEST),
+    INVALID_COURSE_TIME("COURSE_005", "Invalid Course Time", "Begin time must be earlier than end time",
+            HttpStatus.BAD_REQUEST),
+    COURSE_NOT_FOUND("COURSE_006", "Course Not Found", "The specified course (ID) is invalid or does not exist",
+            HttpStatus.NOT_FOUND),
+    COURSE_CLOSED("COURSE_004", "Course Closed", "This course is no longer accepting new enrollments",
+            HttpStatus.BAD_REQUEST),
+    // Enrollment Errors
+    INVALID_PERIOD_TIME("PERIOD_001", "Invalid Period Time", "Begin time must be earlier than end time",
+            HttpStatus.BAD_REQUEST),
+    PERIOD_NOT_FOUND("PERIOD_002", "Period Not Found", "The specified period (ID) is invalid or does not exist",
+            HttpStatus.NOT_FOUND),
+    REGISTRATION_CLOSED("ENROLLMENT_001", "Registration Closed", "The registration period has ended or is not yet open",
+            HttpStatus.BAD_REQUEST),
+    ENROLLMENT_DISABLED("ENROLLMENT_002", "Enrollment Disabled",
+            "The enrollment for this course has been manually closed by the administrator", HttpStatus.BAD_REQUEST),
+    COURSE_FULL("PERIOD_005", "Course Full", "The course has reached its maximum capacity of students",
+            HttpStatus.BAD_REQUEST),
+    ALREADY_ENROLLED("ENROLLMENT_003", "Already Enrolled", "The student has already registered for this course",
+            HttpStatus.BAD_REQUEST),
+    ENROLLMENT_NOT_FOUND("ENROLLMENT_004", "Enrollment Not Found", "The specified enrollment does not exist",
+            HttpStatus.NOT_FOUND),
+    ENROLLMENT_DELETE_FAILED("ENROLLMENT_005", "Delete Enrollment Failed",
+            "Could not delete the enrollment. Please try again later.", HttpStatus.BAD_REQUEST),
 
-    //Generic Erors
-    UNCATEGORIZED_EXCEPTION("9999", "Uncategorized Error", "An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+    // Material Errors
+    MATERIAL_DELETE_FAILED("MATERIAL_001", "Delete Material Failed",
+            "Could not delete the material. Please try again later.", HttpStatus.BAD_REQUEST),
+    MATERIAL_NOT_FOUND("MATERIAL_004", "Material Not Found", "The specified material does not exist",
+            HttpStatus.NOT_FOUND),
+
+    // Exam Errors
+    EXAM_NOT_FOUND("EXAM_001", "Exam Not Found", "The specified exam does not exist", HttpStatus.NOT_FOUND),
+    EXAM_EXPIRED("EXAM_002", "Exam Expired", "The time allowed for this exam has passed", HttpStatus.BAD_REQUEST),
+   
+    // Generic Erors
+    UNCATEGORIZED_EXCEPTION("9999", "Uncategorized Error", "An unexpected error occurred",
+            HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String code;
     private final String title;
