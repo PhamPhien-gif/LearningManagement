@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.example.learning_management.course.Course;
 import com.example.learning_management.enrollment.Enrollment;
+import com.example.learning_management.exam.Submission;
 import com.example.learning_management.shared.BaseEntity;
 import com.example.learning_management.token.Token;
 import jakarta.persistence.Entity;
@@ -48,6 +49,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany( mappedBy = "student", fetch = FetchType.LAZY)
     private List<Enrollment> enrollments;
+
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    private List<Submission> submissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

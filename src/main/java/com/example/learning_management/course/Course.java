@@ -3,6 +3,7 @@ package com.example.learning_management.course;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.example.learning_management.enrollment.Enrollment;
+import com.example.learning_management.exam.Exam;
 import com.example.learning_management.material.Material;
 import com.example.learning_management.period.Period;
 import com.example.learning_management.shared.BaseEntity;
@@ -58,4 +59,6 @@ public class Course extends BaseEntity {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Enrollment> enrollments;
 
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Exam> exams;
 }
