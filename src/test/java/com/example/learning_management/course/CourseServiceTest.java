@@ -146,13 +146,10 @@ public class CourseServiceTest {
     @Test
     void shouldCreateCourseSuccessfully() {
         var response = createResponse();
-
         var savedCourse = createCourse();
-        System.out.println("here: ");
-        System.out.println(savedCourse);
-
         when(courseRepository.save(any())).thenReturn(savedCourse);
         var result = courseService.createCourse(createRequest(), createInstructor());
         assertEquals(result, response);
     }
+
 }
