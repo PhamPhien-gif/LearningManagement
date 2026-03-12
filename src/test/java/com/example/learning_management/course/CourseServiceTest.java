@@ -3,8 +3,7 @@ package com.example.learning_management.course;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 import java.time.LocalDateTime;
@@ -49,6 +48,7 @@ public class CourseServiceTest {
     private final UUID courseId = UUID.randomUUID();
     private final LocalDateTime timeBegin = LocalDateTime.now();
     private final LocalDateTime timeEnd = LocalDateTime.now().plusDays(23);
+
 
     @BeforeEach
     void setUp() {
